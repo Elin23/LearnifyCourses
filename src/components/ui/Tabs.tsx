@@ -38,8 +38,6 @@ export default function Tabs({items, defaultActiveId, activeId, onChange,classNa
   const [internal, setInternal] = React.useState(initial);
   const currentId = isControlled ? (activeId as string) : internal;
 
-  const currentTab = items.find((t) => t.id === currentId) ?? items[0];
-
   const setActive = (id: string) => {
     const t = items.find((x) => x.id === id);
     if (!t || t.disabled) return;

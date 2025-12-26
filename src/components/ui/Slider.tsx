@@ -17,10 +17,6 @@ type SliderProps = {
 };
 
 export default function Slider({children, perViewMobile = 1,perViewDesktop = 3, desktopBreakpoint = 768,gapMobile = 16,gapDesktop = 24,autoplayMs = 2800,}: SliderProps) {
-  const list = useMemo(() => {
-    const arr = Array.from({ length: 0 });
-    return arr;
-  }, []);
 
   const items = useMemo(() => {
     return (Array.isArray(children) ? children : [children]).flat().filter(Boolean);
