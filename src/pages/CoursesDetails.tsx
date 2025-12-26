@@ -20,7 +20,7 @@ export default function CourseDetails() {
   const { toast } = useToast();
   const navigate = useNavigate();
 
- const isAuthed = Boolean(localStorage.getItem("authToken"));
+  const isAuthed = Boolean(localStorage.getItem("authToken"));
 
   const addToCart = (courseId: string) => {
     const key = "cart";
@@ -67,6 +67,13 @@ export default function CourseDetails() {
     title: t.title,
     duration: t.durationMin ?? 0,
   }));
+  const schedule = course.schedule;
+
+  const daysText =
+    schedule?.days?.length ? schedule.days.join(", ") : "—";
+
+  const timeText = schedule?.time ?? "—";
+  const durationText = schedule?.duration ?? "—";
 
   const hasDiscount = course.pricing?.oldPrice && course.pricing?.newPrice && course.pricing.oldPrice > course.pricing.newPrice;
 
@@ -135,6 +142,40 @@ export default function CourseDetails() {
                   <Meta icon={<Users size={18} />} label="Students" value={meta.students} />
                   <Meta icon={<Star size={18} />} label="Rating" value={meta.rating.toFixed(1)} />
                 </div>
+                {course.schedule && (
+                  <div className="mt-6 grid gap-4 sm:grid-cols-3">
+                    <div className="flex items-center gap-3 rounded-xl border border-border bg-bg-main/35 px-4 py-3">
+                      <Clock size={18} className="text-primary" />
+                      <div>
+                        <div className="text-sm font-semibold text-text-primary">
+                          {timeText}
+                        </div>
+                        <div className="text-xs text-text-muted">Time</div>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-3 rounded-xl border border-border bg-bg-main/35 px-4 py-3">
+                      <Layers size={18} className="text-primary" />
+                      <div>
+                        <div className="text-sm font-semibold text-text-primary">
+                          {durationText}
+                        </div>
+                        <div className="text-xs text-text-muted">Duration</div>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-3 rounded-xl border border-border bg-bg-main/35 px-4 py-3">
+                      <Users size={18} className="text-primary" />
+                      <div>
+                        <div className="text-sm font-semibold text-text-primary">
+                          {daysText}
+                        </div>
+                        <div className="text-xs text-text-muted">Days</div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
               </div>
 
               {/* Right  */}
@@ -196,69 +237,69 @@ export default function CourseDetails() {
           </div>
         </div>
         <div>
-        <h3 className="text-xl font-semibold mt-6 text-text-primary">Course sessions</h3>
+          <h3 className="text-xl font-semibold mt-6 text-text-primary">Course sessions</h3>
 
-        <div className="mt-6 space-y-3">
-          {autoSessions.map((s) => {
-            const locked = !s.isPreview;
+          <div className="mt-6 space-y-3">
+            {autoSessions.map((s) => {
+              const locked = !s.isPreview;
 
-            return (
-              <button
-                key={s.index}
-                type="button"
-                onClick={() => {
-                  if (locked) {
-                    if (!isAuthed) {
+              return (
+                <button
+                  key={s.index}
+                  type="button"
+                  onClick={() => {
+                    if (locked) {
+                      if (!isAuthed) {
+                        toast({
+                          variant: "error",
+                          title: "Login required",
+                          message: "Login to access the full sessions.",
+                          duration: 4500,
+                          action: { label: "Go to login", onClick: () => navigate("/auth/login") },
+                        });
+                        return;
+                      }
+
                       toast({
                         variant: "error",
-                        title: "Login required",
-                        message: "Login to access the full sessions.",
+                        title: "Locked session",
+                        message: "Purchase the course to unlock this session.",
                         duration: 4500,
-                        action: { label: "Go to login", onClick: () => navigate("/auth/login") },
+                        action: { label: "Go to cart", onClick: () => navigate("/cart") },
                       });
                       return;
                     }
 
-                    toast({
-                      variant: "error",
-                      title: "Locked session",
-                      message: "Purchase the course to unlock this session.",
-                      duration: 4500,
-                      action: { label: "Go to cart", onClick: () => navigate("/cart") },
-                    });
-                    return;
-                  }
-
-                  navigate(`/courses/${course.slug}/session/1`);
-                }}
-                className="w-full text-left flex items-center justify-between gap-4 rounded-2xl border border-border bg-bg-main/35 px-4 py-4 hover:bg-bg-main/45 transition"
-              >
-                <div className="flex items-start gap-3">
-                  <div className="mt-0.5 text-primary">
-                    {locked ? <Lock size={18} /> : <PlayCircle size={18} />}
-                  </div>
-
-                  <div className="min-w-0">
-                    <div className="text-sm font-medium text-text-primary">
-                      {s.index}. {s.title}
-                      {s.isPreview && (
-                        <span className="ml-2 text-xs rounded-full border border-border bg-bg-secondary/50 px-2 py-0.5 text-text-secondary">
-                          Preview
-                        </span>
-                      )}
+                    navigate(`/courses/${course.slug}/session/1`);
+                  }}
+                  className="w-full text-left flex items-center justify-between gap-4 rounded-2xl border border-border bg-bg-main/35 px-4 py-4 hover:bg-bg-main/45 transition"
+                >
+                  <div className="flex items-start gap-3">
+                    <div className="mt-0.5 text-primary">
+                      {locked ? <Lock size={18} /> : <PlayCircle size={18} />}
                     </div>
-                    <div className="text-xs text-text-muted">{s.durationMin} min</div>
-                  </div>
-                </div>
 
-                <span className="text-xs text-text-muted">{locked ? "Locked" : "Watch"}</span>
-              </button>
-            );
-          })}
+                    <div className="min-w-0">
+                      <div className="text-sm font-medium text-text-primary">
+                        {s.index}. {s.title}
+                        {s.isPreview && (
+                          <span className="ml-2 text-xs rounded-full border border-border bg-bg-secondary/50 px-2 py-0.5 text-text-secondary">
+                            Preview
+                          </span>
+                        )}
+                      </div>
+                      <div className="text-xs text-text-muted">{s.durationMin} min</div>
+                    </div>
+                  </div>
+
+                  <span className="text-xs text-text-muted">{locked ? "Locked" : "Watch"}</span>
+                </button>
+              );
+            })}
+          </div>
         </div>
       </div>
-      </div>
-      
+
 
     </section>
   );
