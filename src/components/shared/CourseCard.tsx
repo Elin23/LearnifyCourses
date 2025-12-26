@@ -1,6 +1,6 @@
 import { ShoppingCart, ArrowRight } from "lucide-react";
 import DynamicCourseImg from "./DynamicCourseImg";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useToast } from "./Toast";
 import type { Course } from "../../types/courses";
 
@@ -42,7 +42,17 @@ export default function CourseCard({ course, onAddToCart, isPurchased = false }:
       return;
     }
 
-    onAddToCart?.(course);
+    if (!onAddToCart) {
+      toast({
+        variant: "error",
+        title: "Cart not available",
+        message: "Add-to-cart is not wired on this page yet.",
+        duration: 3000,
+      });
+      return;
+    }
+
+    onAddToCart(course);
 
     toast({
       variant: "success",
@@ -52,6 +62,7 @@ export default function CourseCard({ course, onAddToCart, isPurchased = false }:
       action: { label: "View cart", onClick: () => navigate("/cart") },
     });
   };
+
 
   return (
     <div className="group h-full rounded-2xl border border-border bg-bg-main p-5 transition hover:shadow-lg hover:-translate-y-0.5 flex flex-col">
@@ -107,18 +118,18 @@ export default function CourseCard({ course, onAddToCart, isPurchased = false }:
       </div>
 
       <div className="mt-auto pt-4 flex gap-2">
-        <a href={`/courses/${course.slug}`} className="flex-1 h-10 inline-flex items-center justify-center gap-2 rounded-lg border border-border text-sm font-medium text-text-primary hover:bg-bg-muted transition">
+        <Link to={`/courses/${course.slug}`} className="flex-1 h-10 inline-flex items-center justify-center gap-2 rounded-lg border border-border text-sm font-medium text-text-primary hover:bg-bg-muted transition">
           Details
           <ArrowRight size={16} />
-        </a>
+        </Link>
 
         {isPurchased ? (
-          <button type="button" onClick={() => navigate(`/courses/${course.slug}`)} className="flex-1 h-10 inline-flex items-center justify-center gap-2 rounded-lg bg-cta text-sm font-medium text-white hover:opacity-90 transition focus:outline-none focus:ring-2 focus:ring-cta/30">
+          <button type="button" onClick={() => navigate(`/courses/${course.slug}`)} className="flex-1 h-10 inline-flex items-center justify-center gap-2 rounded-lg cursor-pointer bg-cta text-sm font-medium text-white hover:opacity-90 transition focus:outline-none focus:ring-2 focus:ring-cta/30">
             Continue
             <ArrowRight size={16} />
           </button>
         ) : (
-          <button type="button" onClick={handleAdd} className="flex-1 h-10 inline-flex items-center justify-center gap-2 rounded-lg bg-primary text-sm font-medium text-white hover:bg-primary-hover transition focus:outline-none focus:ring-2 focus:ring-primary/30">
+          <button type="button" onClick={handleAdd} className="flex-1 h-10 inline-flex items-center justify-center gap-2 rounded-lg bg-primary text-sm font-medium cursor-pointer text-white hover:bg-primary-hover transition focus:outline-none focus:ring-2 focus:ring-primary/30">
             <ShoppingCart size={16} />
             Add to cart
           </button>

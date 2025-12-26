@@ -97,7 +97,7 @@ export default function Hero() {
                                 <ArrowRight size={18} className="transition-transform duration-200 group-hover:translate-x-0.5" />
                             </Link>
                             )}
-                            <button type="button" className="group inline-flex items-center gap-2 rounded-full px-5 py-3 text-sm font-medium text-text-primary transition hover:bg-bg-muted hover:-translate-y-0.5 active:translate-y-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30 focus-visible:ring-offset-2 ring-offset-bg-main">
+                            <button type="button" className="group inline-flex items-center gap-2 rounded-full cursor-pointer px-5 py-3 text-sm font-medium text-text-primary transition hover:bg-bg-muted hover:-translate-y-0.5 active:translate-y-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30 focus-visible:ring-offset-2 ring-offset-bg-main">
                                 <PlayCircle size={20} className="text-primary transition-transform duration-200 group-hover:scale-[1.06]" />
                                 <span>Watch preview</span>
                             </button>

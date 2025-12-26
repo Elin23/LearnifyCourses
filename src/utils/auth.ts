@@ -26,6 +26,35 @@ export function getAuth(): { token: string | null; user: AuthUser | null } {
   return { token, user };
 }
 
+let lastToken: string | null = null;
+let lastUserRaw: string | null = null;
+let lastSnapshot: { token: string | null; user: AuthUser | null } = {
+  token: null,
+  user: null,
+};
+
+export function getAuthSnapshot(): { token: string | null; user: AuthUser | null } {
+  const token = getAuthToken();
+  const rawUser = localStorage.getItem("user");
+
+  if (token === lastToken && rawUser === lastUserRaw) {
+    return lastSnapshot;
+  }
+
+  lastToken = token;
+  lastUserRaw = rawUser;
+
+  let user: AuthUser | null = null;
+  try {
+    user = rawUser ? (JSON.parse(rawUser) as AuthUser) : null;
+  } catch {
+    user = null;
+  }
+
+  lastSnapshot = { token, user };
+  return lastSnapshot;
+}
+
 export function isAuthed() {
   return Boolean(getAuthToken());
 }
@@ -41,5 +70,19 @@ export function clearAuth() {
   localStorage.removeItem("user");
   localStorage.removeItem("cart");
   window.dispatchEvent(new Event(AUTH_EVENT));
-  window.dispatchEvent(new Event("storage"));
+}
+
+export function subscribeAuth(callback: () => void) {
+  const onAuth = () => callback();
+  const onStorage = (e: StorageEvent) => {
+    if (e.key === AUTH_TOKEN_KEY || e.key === "user") callback();
+  };
+
+  window.addEventListener(AUTH_EVENT, onAuth);
+  window.addEventListener("storage", onStorage);
+
+  return () => {
+    window.removeEventListener(AUTH_EVENT, onAuth);
+    window.removeEventListener("storage", onStorage);
+  };
 }

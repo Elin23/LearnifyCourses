@@ -4,6 +4,7 @@ import { courses } from "../data/courses";
 import Tabs from "../components/ui/Tabs";
 import CourseCard from "../components/shared/CourseCard";
 import Pagination from "../components/ui/Pagination";
+import type { Course } from "../types/courses";
 
 
 const PAGE_SIZE = 6;
@@ -17,6 +18,17 @@ export default function CoursesPage() {
     const unique = Array.from(new Set(courses.map((c) => c.category)));
     return ["all", ...unique];
   }, []);
+  const addToCart = (course: Course) => {
+    const raw = localStorage.getItem("cart");
+    const cart: Course[] = raw ? JSON.parse(raw) : [];
+
+    const exists = cart.some((c) => c.id === course.id);
+    if (!exists) {
+      cart.push(course);
+      localStorage.setItem("cart", JSON.stringify(cart));
+      window.dispatchEvent(new Event("storage"));
+    }
+  };
 
   const filtered = useMemo(() => {
     const q = query.toLowerCase().trim();
@@ -55,7 +67,7 @@ export default function CoursesPage() {
         <div
           className="absolute inset-0 opacity-[0.06] dark:opacity-[0.1]"
           style={{
-            backgroundImage:"linear-gradient(to right, rgba(148,163,184,.3) 1px, transparent 1px), linear-gradient(to bottom, rgba(148,163,184,.3) 1px, transparent 1px)",
+            backgroundImage: "linear-gradient(to right, rgba(148,163,184,.3) 1px, transparent 1px), linear-gradient(to bottom, rgba(148,163,184,.3) 1px, transparent 1px)",
             backgroundSize: "44px 44px",
           }}
         />
@@ -76,9 +88,9 @@ export default function CoursesPage() {
             <Search size={18} className=" absolute left-4 top-1/2 -translate-y-1/2 text-text-secondary z-20 pointer-events-none" />
 
             <input value={query} onChange={(e) => {
-                setQuery(e.target.value);
-                setPage(1);
-              }}
+              setQuery(e.target.value);
+              setPage(1);
+            }}
               placeholder="Search courses..."
               className=" w-full h-12 rounded-2xl pl-11 pr-4 border border-border bg-bg-secondary/50 backdrop-blur text-sm text-text-primary placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-primary/30 "
             />
@@ -100,7 +112,7 @@ export default function CoursesPage() {
         ) : (
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {pagedCourses.map((course) => (
-              <CourseCard key={course.id} course={course} />
+              <CourseCard key={course.id} course={course} onAddToCart={addToCart} />
             ))}
           </div>
         )}

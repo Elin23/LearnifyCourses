@@ -35,8 +35,8 @@ export default function Navbar({ navItems }: NavbarProps) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const filtered = navItems.filter((i) => (i.protected ? isAuthed : true));
 
-  const iconBtn = "h-10 w-10 rounded-full grid place-items-center border border-border bg-bg-main/80 hover:bg-bg-muted transition";
-  const textBtn = "h-10 rounded-full px-4 grid place-items-center text-sm border border-border bg-bg-main/80 hover:bg-bg-muted transition";
+  const iconBtn = "h-10 w-10 rounded-full grid place-items-center border border-border bg-bg-main/80 hover:bg-bg-muted transition cursor-pointer";
+  const textBtn = "h-10 rounded-full px-4 grid place-items-center text-sm border border-border bg-bg-main/80 hover:bg-bg-muted transition cursor-pointer";
 
   useEffect(() => {
     document.documentElement.classList.toggle("dark", theme === "dark");
@@ -95,7 +95,7 @@ export default function Navbar({ navItems }: NavbarProps) {
     <header className={`fixed top-0 inset-x-0 z-50 transition-all duration-200  ${scrolled || mobileOpen ? "bg-bg-secondary/80 backdrop-blur-xl border-b border-border shadow-sm" : "bg-transparent border-b border-transparent"}`}>
       <div className="mx-auto max-w-6xl px-4">
         <div className="relative flex h-16 items-center">
-          <Link to="/" className="z-10 text-lg font-semibold tracking-tight text-text-primary font-secondary">
+          <Link to="/" className="z-10 text-lg font-semibold tracking-tight text-text-primary font-secondary cursor-pointer">
             Learnify
           </Link>
 
@@ -175,10 +175,15 @@ export default function Navbar({ navItems }: NavbarProps) {
               <div className="my-3 h-px bg-border" />
 
               {isAuthed ? (
+                <div className="flex justify-center gap-2">
                 <button onClick={openLogoutConfirm} className="h-11 w-full flex items-center justify-center gap-2 rounded-2xl border border-border bg-bg-main/80 text-sm hover:bg-bg-muted transition text-text-primary">
                   <LogOut size={18} className="text-text-primary" />
                   Logout
                 </button>
+                <Link to="/profile" className={iconBtn}>
+                  <User size={18} className="text-text-primary" />
+                </Link>
+                </div>
               ) : (
                 <div className="grid grid-cols-2 gap-2">
                   <Link to="/auth/login" className="h-11 rounded-2xl border border-border bg-bg-main/80 text-text-primary grid place-items-center text-sm hover:bg-bg-muted transition">

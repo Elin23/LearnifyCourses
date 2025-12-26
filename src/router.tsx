@@ -1,4 +1,3 @@
-import { Navigate } from "react-router-dom";
 import MainLayout from "./layouts/MainLayout";
 import Home from "./pages/Home";
 import CoursesPage from "./pages/CoursesPage";
@@ -16,13 +15,8 @@ import AuthLayout from "./layouts/AuthLayout";
 import Login from "./pages/AuthPages/Login";
 import SignUpPage from "./pages/AuthPages/SignUpPage";
 import ForgotPasswordPage from "./pages/AuthPages/ForgotPasswordPage";
-import type { PropsWithChildren } from "react";
 import CourseSession from "./pages/CourseSession";
-
-const ProtectedRoute = ({ children }: PropsWithChildren) => {
-  const isAuthed = true;
-  return isAuthed ? children : <Navigate to="/auth/login" replace />;
-};
+import ProtectedRoute from "./components/ProtectedRouter";
 
 export const routes = [
   {
@@ -30,11 +24,15 @@ export const routes = [
     element: <MainLayout />,
     children: [
       { index: true, element: <Home /> },
+
       { path: "courses", element: <CoursesPage /> },
       { path: "courses/:slug", element: <CoursesDetails /> },
-      {path:"/courses/:slug/session/:index", element: <CourseSession /> },
+      { path: "courses/:slug/session/:index", element: <CourseSession /> },
+
       { path: "instructions", element: <InstructionsPage /> },
       { path: "cart", element: <CartPage /> },
+
+      // ✅ محمي
       {
         path: "checkout",
         element: (
@@ -42,7 +40,7 @@ export const routes = [
             <Checkout />
           </ProtectedRoute>
         ),
-      },                                                    
+      },
       {
         path: "my-courses",
         element: (
@@ -67,6 +65,7 @@ export const routes = [
           </ProtectedRoute>
         ),
       },
+
       { path: "terms", element: <TermsPage /> },
       { path: "privacy", element: <PrivacyPage /> },
       { path: "*", element: <NotFoundPage /> },
